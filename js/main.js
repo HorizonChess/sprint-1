@@ -42,9 +42,7 @@ function buildBoard() {  //returns a matrix of cell objects
             }
         }
     }
-    //place mines for testing
-    board[2][1].isMine = true
-    board[1][2].isMine = true
+
     return board
 }
 
