@@ -1,0 +1,27 @@
+.table-container {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    margin: 100px auto;
+    border: 1px solid lightgray;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    background-color: rgb(195, 195, 194);
+}
+
+h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
