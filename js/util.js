@@ -18,16 +18,16 @@ function renderBoard(mat, selector) {
                 cellContent = cell.minesAroundCount
             }
             else if (cell.isRevealed && cell.isMine) {
-                cellContent = '&#128163;' //bomb html entity
+                cellContent = MINE //bomb html entity
             }
             else if (cell.isMarked) {
-                cellContent = '&#x1F6A9;' //red flag html entity
+                cellContent = FLAG //red flag html entity
             }
 
 
             strHTML += `<td class="${className}" 
                             onclick="onCellClicked(this,${i}, ${j})" 
-                            oncontextmenu="handleRightClick(this, event, ${i}, ${j})">
+                            oncontextmenu="onCellMarked(event, ${i}, ${j})">
                             ${cellContent}
                         </td>`
         }
@@ -38,6 +38,7 @@ function renderBoard(mat, selector) {
     const elContainer = document.querySelector(selector)
     elContainer.innerHTML = strHTML
 }
+
 
 
 function renderCell(pos, value) {

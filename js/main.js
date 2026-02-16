@@ -1,9 +1,13 @@
+//to do: add support for difficulty, add game over, add timer (16.2)
+
 
 
 var gBoard
+var gSeconds
+var gTimerInterval
 
-const MINE = 'Mine'
-const FLAG = 'Flag'
+const MINE = '&#128163;'
+const FLAG = '&#x1F6A9;'
 
 const gLevel = {
     SIZE: 4,
@@ -19,10 +23,14 @@ const gGame = {
 
 function init() {
     // gGame.isOn = true
+    clearInterval(gTimerInterval)
+    gSeconds = 0
     gBoard = buildBoard()
     genRandMines()
     setMinesNegsCount()
+    updateStats()
     renderBoard(gBoard, '.board-container')
+    gTimerInterval = setInterval(setTimer, 1000)
 
 }
 
@@ -64,19 +72,29 @@ function setDifficulty() {
 function onCellClicked(elCell, i, j) {
     //update cell in the model
     var curCell = gBoard[i][j]
-    gBoard[i][j].isRevealed = true
+    curCell.isRevealed = true
+    renderBoard(gBoard, '.board-container')
 
     if (curCell.isMine) {
-        console.log('mine!')
-        elCell.innerHTML = '&#128163' //bomb html entity
-        gameOver()
+
+        // gameOver()
     }
-    elCell.innerHTML = curCell.minesAroundCount
+    updateStats()
 
 }
 
-function onCellMarked(elCell, i, j) {
+//marks the cell and calls update stats
+function onCellMarked(ev, i, j) {
+    ev.preventDefault()
+    var currCell = gBoard[i][j]
 
+    currCell.isMarked = !currCell.isMarked
+    currCell.isMarked ? gLevel.MINES-- : gLevel.MINES++
+
+    updateStats()
+    renderBoard(gBoard, '.board-container')
+    
+    // if (checkGameOver()) showGameoverModal() TO FINISH tommorow
 }
 
 
@@ -88,9 +106,6 @@ function setMinesNegsCount() {
             //update model on mines around
             gBoard[i][j].minesAroundCount = getMinesNegsCount(i, j)
 
-            // //update DOM
-            // var location = { i: i, j: j }
-            // renderCell(location, gBoard[i][j].minesAroundCount)
         }
     }
 
@@ -116,11 +131,22 @@ function getMinesNegsCount(idx, jdx) {
 
 
 function checkGameOver() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard.length; j++) {
+            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) return false
+            if (!gBoard[i][j].isMine && !gBoard[i][j].isRevealed) return false
+        }
+    }
+    return true
+}
+
+function updateStats() {
+    const stats = document.querySelector('.stats')
+    stats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gSeconds}`
 
 }
 
-
-function handleRightClick(elCell, ev, i, j) {
-    ev.preventDefault()
-    onCellMarked(elCell, i, j)
+function setTimer() {
+    gSeconds++
+    updateStats()
 }
