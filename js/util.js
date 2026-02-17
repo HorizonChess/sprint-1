@@ -26,7 +26,7 @@ function renderBoard(mat, selector) {
 
 
             strHTML += `<td class="${className}" 
-                            onclick="onCellClicked(this,${i}, ${j})" 
+                            onclick="onCellClicked(${i}, ${j})" 
                             oncontextmenu="onCellMarked(event, ${i}, ${j})">
                             ${cellContent}
                         </td>`
@@ -39,7 +39,14 @@ function renderBoard(mat, selector) {
     elContainer.innerHTML = strHTML
 }
 
-
+function revealMines() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++)
+            if (gBoard[i][j].isMine) {
+                gBoard[i][j].isRevealed = true
+            }
+    }
+}
 
 function renderCell(pos, value) {
     // Select the elCell and set the value
@@ -47,6 +54,35 @@ function renderCell(pos, value) {
     elCell.innerHTML = value
 }
 
+
+function showGameOverModal(isVictory) {
+    gGame.isOn = false
+    const gameOverModal = document.querySelector('.game-over-modal')
+    if (isVictory) {
+        gameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="init()"> Play again?</button>'
+    }
+    else {
+        gameOverModal.innerHTML = '<span> Game over!</span><button onclick="init()"> Play again?</button>'
+    }
+    gameOverModal.style.display = 'flex'
+
+    hideBoard()
+}
+
+
+function hideBoard() {
+    const board = document.querySelector('.board-container')
+    board.style.display = 'none'
+}
+
+
+function showBoard() {
+    const board = document.querySelector('.board-container')
+    const gameOverModal = document.querySelector('.game-over-modal')
+
+    board.style.display = 'flex'
+    gameOverModal.style.display = 'none'
+}
 
 function getRandomIntInclusive(min, max) {
     const minCeiled = Math.ceil(min)

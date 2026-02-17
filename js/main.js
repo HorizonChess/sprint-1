@@ -1,19 +1,18 @@
 //to do: add support for difficulty, add game over, add timer (16.2)
+//to do: add cascading reveal on click, reveal mines on bad end (17.2)
 
 
-
-var gBoard
-var gSeconds
-var gTimerInterval
-
-const MINE = '&#128163;'
-const FLAG = '&#x1F6A9;'
-
-const gLevel = {
+var gLevel =
+{
     SIZE: 4,
     MINES: 2
 }
+var gBoard = buildBoard()
+var gTimerInterval
+var gCellsClicked
 
+const MINE = '&#128163;'
+const FLAG = '&#x1F6A9;'
 const gGame = {
     isOn: false,
     revealedCount: 0,
@@ -22,16 +21,27 @@ const gGame = {
 }
 
 function init() {
-    // gGame.isOn = true
+    gCellsClicked = 0
+    gGame.secsPassed = 0
     clearInterval(gTimerInterval)
-    gSeconds = 0
     gBoard = buildBoard()
-    genRandMines()
-    setMinesNegsCount()
+    showBoard()
     updateStats()
     renderBoard(gBoard, '.board-container')
-    gTimerInterval = setInterval(setTimer, 1000)
 
+
+}
+
+function handleGameStart() {
+    if (gCellsClicked === 1) {
+        gGame.isOn = true
+        gTimerInterval = setInterval(setTimer, 1000)
+
+        genRandMines()
+        setMinesNegsCount()
+        updateStats()
+        renderBoard(gBoard, '.board-container')
+    }
 }
 
 function buildBoard() {  //returns a matrix of cell objects
@@ -58,43 +68,110 @@ function genRandMines() {
     for (var i = 0; i < gLevel.MINES; i++) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
         var randJdx = getRandomIntInclusive(0, gBoard[0].length - 1)
-        gBoard[randIdx][randJdx].isMine = true
+
+        if (!gBoard[randIdx][randJdx].isRevealed && !gBoard[randIdx][randJdx].isMine) {
+            gBoard[randIdx][randJdx].isMine = true
+        }
+        else {
+            i--
+        }
+
     }
-
 }
 
+function setDifficulty(difficulty) {
+    if (gGame.isOn) return
 
-function setDifficulty() {
-
-}
-
-
-function onCellClicked(elCell, i, j) {
-    //update cell in the model
-    var curCell = gBoard[i][j]
-    curCell.isRevealed = true
+    switch (difficulty) {
+        case 'Beginner':
+            gLevel = { SIZE: 4, MINES: 2 }
+            break;
+        case 'Intermediate':
+            gLevel = { SIZE: 8, MINES: 14 }
+            break;
+        case 'Expert':
+            gLevel = { SIZE: 12, MINES: 32 }
+            break;
+        default: gLevel = { SIZE: 4, MINES: 2 }
+    }
+    gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
+    updateStats()
+}
 
-    if (curCell.isMine) {
 
-        // gameOver()
+function onCellClicked(i, j) {
+
+    //update cell in the model
+    var currCell = gBoard[i][j]
+    currCell.isRevealed = true
+    //checks if it's the first click
+    gCellsClicked++
+    handleGameStart()
+    if (!gGame.isOn) return
+
+    //cascade reveal
+    if (currCell.minesAroundCount === 0)
+        for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
+
+            for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
+                expandReveal(idx, jdx)
+            }
+        }
+
+    //check win/loss
+    if (currCell.isMine) {
+        revealMines()
+        setTimeout(() => {
+            showGameOverModal(false)
+        }, 1000)
     }
+    if (checkGameOver()) {
+        setTimeout(() => {
+            showGameOverModal(true)
+        }, 1000)
+    }
+    //update stats and board in DOM
+    renderBoard(gBoard, '.board-container')
     updateStats()
 
 }
 
+function expandReveal(i, j) {
+    if (i < 0 || i > gBoard.length - 1 || j < 0 || j > gBoard.length - 1) return
+    const currCell = gBoard[i][j]
+    if (currCell.isRevealed) return
+    if (currCell.isMarked) return
+    if (currCell.isMine) return
+
+    currCell.isRevealed = true
+
+    if (currCell.minesAroundCount > 0) return
+
+    for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
+
+        for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
+            expandReveal(idx, jdx)
+        }
+    }
+}
+
+
 //marks the cell and calls update stats
 function onCellMarked(ev, i, j) {
     ev.preventDefault()
+    if (!gGame.isOn) return
+
     var currCell = gBoard[i][j]
+    if (currCell.isRevealed) return
 
     currCell.isMarked = !currCell.isMarked
     currCell.isMarked ? gLevel.MINES-- : gLevel.MINES++
 
     updateStats()
     renderBoard(gBoard, '.board-container')
-    
-    // if (checkGameOver()) showGameoverModal() TO FINISH tommorow
+
+    if (checkGameOver()) showGameoverModal(true)
 }
 
 
@@ -142,11 +219,12 @@ function checkGameOver() {
 
 function updateStats() {
     const stats = document.querySelector('.stats')
-    stats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gSeconds}`
+    stats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gGame.secsPassed}`
 
 }
 
 function setTimer() {
-    gSeconds++
+    gGame.secsPassed++
     updateStats()
 }
+

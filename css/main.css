@@ -19,9 +19,46 @@ td {
     background-color: rgb(195, 195, 194);
 }
 
-h2 {
+.stats {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 50px;
+    margin-bottom: 20px
 
+}
+
+.difficulty-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px
+
+}
+
+footer {
+    display: block;
+    margin-top: 150px
+
+}
+
+h3 {
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.game-over-modal {
+	height: 300px auto;
+	min-height: 300px;
+	width: 100px auto;
+	display: none;
+	background-color: bisque;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 22px;
+	font-weight: bold;
+	color: black;
 }
