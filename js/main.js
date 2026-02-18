@@ -5,7 +5,7 @@ var gLevel =
     MINES: 2,
     LIVES: 2,
 }
-var gBoard = buildBoard()
+var gBoard
 var gTimerInterval
 var gCellsClicked
 
@@ -14,6 +14,7 @@ const FLAG = '&#x1F6A9;'
 const NORMAL_SMILEY = '&#128515;'
 const EXPLODING_HEAD = '&#129327;'
 const WIN = '&#128526;'
+
 const gGame = {
     isOn: false,
     // revealedCount: 0,
@@ -24,17 +25,17 @@ const gGame = {
 }
 
 function init() {
+    gGame.isOn = false
     gCellsClicked = 0
     gGame.secsPassed = 0
     gGame.smileyState = NORMAL_SMILEY
-    clearInterval(gTimerInterval)
+
     setDifficulty(gGame.difficulty)
+    clearInterval(gTimerInterval)
     showBoard()
     updateStats()
     renderBoard(gBoard, '.board-container')
     renderSmiley()
-
-
 }
 
 function handleGameStart() {
@@ -49,7 +50,9 @@ function handleGameStart() {
     }
 }
 
-function buildBoard() {  //returns a matrix of cell objects
+//returns a clean board at the size of glevel.size
+
+function buildBoard() {
     const size = gLevel.SIZE
     const board = []
 
@@ -116,15 +119,6 @@ function onCellClicked(i, j) {
     handleGameStart()
     if (!gGame.isOn) return
 
-    //cascade reveal if no mine neighbors
-    if (currCell.minesAroundCount === 0)
-        for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
-
-            for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
-                expandReveal(idx, jdx)
-            }
-        }
-
     //check win/loss
     if (currCell.isMine) {
         gLevel.LIVES--
@@ -145,7 +139,19 @@ function onCellClicked(i, j) {
             }, 1000)
         }
     }
-    if (checkGameOver()) {
+
+
+    //cascade reveal if no mine neighbors
+    else if (currCell.minesAroundCount === 0)
+        for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
+
+            for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
+                expandReveal(idx, jdx)
+            }
+        }
+
+
+    if (isVictory()) {
         gGame.smileyState = WIN //win html entity
         renderSmiley()
         setTimeout(() => {
@@ -193,7 +199,7 @@ function onCellMarked(ev, i, j) {
     updateStats()
     renderBoard(gBoard, '.board-container')
 
-    if (checkGameOver()) {
+    if (isVictory()) {
         gGame.smileyState = WIN
         renderSmiley()
         showGameOverModal(true)
@@ -233,7 +239,7 @@ function getMinesNegsCount(idx, jdx) {
 }
 
 //checks for win
-function checkGameOver() {
+function isVictory() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
             if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) return false

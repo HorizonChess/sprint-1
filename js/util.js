@@ -53,11 +53,6 @@ function revealMines() {
     }
 }
 
-function renderCell(pos, value) {
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${pos.i}-${pos.j}`)
-    elCell.innerHTML = value
-}
 
 
 function showGameOverModal(isVictory) {

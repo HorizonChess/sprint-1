@@ -17,6 +17,7 @@ td {
     width: 30px;
     text-align: center;
     background-color: rgb(195, 195, 194);
+    cursor: pointer;
 }
 
 .stats {
@@ -58,6 +59,12 @@ h3 {
     font-size: 22px;
     font-weight: bold;
     color: black;
+}
+
+.smiley-zone {
+    margin-left: 40px;
+    font-size: 30px;
+    cursor: pointer;
 }
 
 .revealed {
