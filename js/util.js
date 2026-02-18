@@ -103,7 +103,7 @@ function showGameOverModal(isVictory) {
         elGameOverModal.innerHTML = '<span> Game over!</span><button onclick="init()"> Play again?</button>'
     }
 
-    gameOverModal.style.display = 'flex'
+    elGameOverModal.style.display = 'flex'
     hideBoard()
 
 }

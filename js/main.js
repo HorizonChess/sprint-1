@@ -34,9 +34,9 @@ function init() {
 
     //building and rendering the board
     setDifficulty(gGame.difficulty)
-    gBoard = buildBoard()
-    renderBoard(gBoard, '.board-container')
-    updateStats()
+    // gBoard = buildBoard()
+    // renderBoard(gBoard, '.board-container')
+    // updateStats()
     renderSmiley()
     showBoard()
 }
@@ -141,6 +141,9 @@ function setDifficulty(difficulty) {
     }
 
     gGame.difficulty = difficulty
+    gBoard = buildBoard()
+    renderBoard(gBoard, '.board-container')
+    updateStats()
 }
 
 //recursive function to expand reveal.
