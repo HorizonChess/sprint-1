@@ -25,89 +25,21 @@ const gGame = {
 }
 
 function init() {
+    //resetting variables
     gGame.isOn = false
     gCellsClicked = 0
     gGame.secsPassed = 0
     gGame.smileyState = NORMAL_SMILEY
-
-    setDifficulty(gGame.difficulty)
     clearInterval(gTimerInterval)
-    showBoard()
-    updateStats()
-    renderBoard(gBoard, '.board-container')
-    renderSmiley()
-}
 
-function handleGameStart() {
-    if (gCellsClicked === 1) {
-        gGame.isOn = true
-        gTimerInterval = setInterval(setTimer, 1000)
-
-        genRandMines()
-        setMinesNegsCount()
-        updateStats()
-        renderBoard(gBoard, '.board-container')
-    }
-}
-
-//returns a clean board at the size of glevel.size
-
-function buildBoard() {
-    const size = gLevel.SIZE
-    const board = []
-
-    for (var i = 0; i < size; i++) {
-        board.push([])
-
-        for (var j = 0; j < size; j++) {
-            board[i][j] = {
-                minesAroundCount: 0,
-                isRevealed: false,
-                isMine: false,
-                isMarked: false
-            }
-        }
-    }
-
-    return board
-}
-//generates random mines on the board model
-function genRandMines() {
-    for (var i = 0; i < gLevel.MINES; i++) {
-        var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
-        var randJdx = getRandomIntInclusive(0, gBoard[0].length - 1)
-
-        if (!gBoard[randIdx][randJdx].isRevealed && !gBoard[randIdx][randJdx].isMine) {
-            gBoard[randIdx][randJdx].isMine = true
-        }
-        else {
-            i--
-        }
-
-    }
-}
-
-function setDifficulty(difficulty) {
-    if (gGame.isOn) return
-
-    switch (difficulty) {
-        case 'Beginner':
-            gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
-            break;
-        case 'Intermediate':
-            gLevel = { SIZE: 8, MINES: 14, LIVES: 3 }
-            break;
-        case 'Expert':
-            gLevel = { SIZE: 12, MINES: 32, LIVES: 3 }
-            break;
-        default: gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
-    }
+    //building and rendering the board
+    setDifficulty(gGame.difficulty)
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     updateStats()
-    gGame.difficulty = difficulty
+    renderSmiley()
+    showBoard()
 }
-
 
 function onCellClicked(i, j) {
 
@@ -150,7 +82,7 @@ function onCellClicked(i, j) {
             }
         }
 
-
+    //check if this click wins the game
     if (isVictory()) {
         gGame.smileyState = WIN //win html entity
         renderSmiley()
@@ -164,18 +96,72 @@ function onCellClicked(i, j) {
 
 }
 
+function handleGameStart() {
+    if (gCellsClicked === 1) {
+        gGame.isOn = true
+        gTimerInterval = setInterval(setTimer, 1000)
+
+        genRandMines()
+        setMinesNegsCount()
+        updateStats()
+        renderBoard(gBoard, '.board-container')
+    }
+}
+
+//generates random mines on the board model
+function genRandMines() {
+    for (var i = 0; i < gLevel.MINES; i++) {
+        var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
+        var randJdx = getRandomIntInclusive(0, gBoard[0].length - 1)
+
+        if (!gBoard[randIdx][randJdx].isRevealed && !gBoard[randIdx][randJdx].isMine) {
+            gBoard[randIdx][randJdx].isMine = true
+        }
+        else {
+            i--
+        }
+
+    }
+}
+
+function setDifficulty(difficulty) {
+    if (gGame.isOn) return
+
+    switch (difficulty) {
+        case 'Beginner':
+            gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
+            break;
+        case 'Intermediate':
+            gLevel = { SIZE: 8, MINES: 14, LIVES: 3 }
+            break;
+        case 'Expert':
+            gLevel = { SIZE: 12, MINES: 32, LIVES: 3 }
+            break;
+        default: gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
+    }
+
+    gGame.difficulty = difficulty
+}
+
 //recursive function to expand reveal.
+
 function expandReveal(i, j) {
+
+    //return if outside borders, or the cell is marked, revealed or a mine
+
     if (i < 0 || i > gBoard.length - 1 || j < 0 || j > gBoard.length - 1) return
     const currCell = gBoard[i][j]
     if (currCell.isRevealed) return
     if (currCell.isMarked) return
     if (currCell.isMine) return
 
+    //otherwise we set it to revealed
     currCell.isRevealed = true
 
+    //if some of it's neighbors are mines, stop
     if (currCell.minesAroundCount > 0) return
 
+    //otherwise we fetch this cells's neighbors and feed them recursively to expandReveal
     for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
 
         for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
@@ -184,8 +170,8 @@ function expandReveal(i, j) {
     }
 }
 
-
 //marks the cell and calls update stats
+
 function onCellMarked(ev, i, j) {
     ev.preventDefault()
     if (!gGame.isOn) return
@@ -193,6 +179,7 @@ function onCellMarked(ev, i, j) {
     var currCell = gBoard[i][j]
     if (currCell.isRevealed) return
 
+//toggle ismarked and level mines count
     currCell.isMarked = !currCell.isMarked
     currCell.isMarked ? gLevel.MINES-- : gLevel.MINES++
 
@@ -206,21 +193,8 @@ function onCellMarked(ev, i, j) {
     }
 }
 
-//sets the mine neighbor count for all cells
-function setMinesNegsCount() {
-
-    for (var i = 0; i < gBoard.length; i++) {
-
-        for (var j = 0; j < gBoard[0].length; j++) {
-            //update model on mines around
-            gBoard[i][j].minesAroundCount = getMinesNegsCount(i, j)
-
-        }
-    }
-
-
-}
 //gets mine neighbor count for a specific cell
+
 function getMinesNegsCount(idx, jdx) {
     var minesNegsCount = 0
     for (var i = Math.max(idx - 1, 0); i <= Math.min(idx + 1, gBoard.length - 1); i++) {
@@ -238,7 +212,25 @@ function getMinesNegsCount(idx, jdx) {
     return minesNegsCount
 }
 
+//sets the mine neighbor count for all cells
+
+function setMinesNegsCount() {
+
+    for (var i = 0; i < gBoard.length; i++) {
+
+        for (var j = 0; j < gBoard[0].length; j++) {
+            //update model on mines around
+            gBoard[i][j].minesAroundCount = getMinesNegsCount(i, j)
+
+        }
+    }
+
+
+}
+
+
 //checks for win
+
 function isVictory() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
@@ -248,20 +240,11 @@ function isVictory() {
     }
     return true
 }
-//updates stats in DOM
-function updateStats() {
-    const elStats = document.querySelector('.stats')
-    elStats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gGame.secsPassed} || Lives left: ${gLevel.LIVES}`
 
-}
 //acts as timer
+
 function setTimer() {
     gGame.secsPassed++
     updateStats()
 }
 
-function renderSmiley() {
-    const elSmiley = document.querySelector('.smiley-zone')
-    elSmiley.innerHTML = `${gGame.smileyState}`
-
-}

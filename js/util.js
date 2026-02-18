@@ -1,3 +1,5 @@
+//renders the board according to objects content
+
 function renderBoard(mat, selector) {
 
     var strHTML = '<table><tbody>'
@@ -44,6 +46,42 @@ function renderBoard(mat, selector) {
     elContainer.innerHTML = strHTML
 }
 
+//returns a clean board at the size of glevel.size
+
+function buildBoard() {
+    const size = gLevel.SIZE
+    const board = []
+
+    for (var i = 0; i < size; i++) {
+        board.push([])
+
+        for (var j = 0; j < size; j++) {
+            board[i][j] = {
+                minesAroundCount: 0,
+                isRevealed: false,
+                isMine: false,
+                isMarked: false
+            }
+        }
+    }
+
+    return board
+}
+
+
+//updates stats in DOM
+function updateStats() {
+    const elStats = document.querySelector('.stats')
+    elStats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gGame.secsPassed} || Lives left: ${gLevel.LIVES}`
+
+}
+
+function renderSmiley() {
+    const elSmiley = document.querySelector('.smiley-zone')
+    elSmiley.innerHTML = `${gGame.smileyState}`
+
+}
+//sets mines to revealed
 function revealMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++)
@@ -54,28 +92,29 @@ function revealMines() {
 }
 
 
-
+//handles game over
 function showGameOverModal(isVictory) {
     gGame.isOn = false
-    const gameOverModal = document.querySelector('.game-over-modal')
+    const elGameOverModal = document.querySelector('.game-over-modal')
     if (isVictory) {
-        gameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="init()"> Play again?</button>'
+        elGameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="init()"> Play again?</button>'
     }
     else {
-        gameOverModal.innerHTML = '<span> Game over!</span><button onclick="init()"> Play again?</button>'
+        elGameOverModal.innerHTML = '<span> Game over!</span><button onclick="init()"> Play again?</button>'
     }
-    gameOverModal.style.display = 'flex'
 
+    gameOverModal.style.display = 'flex'
     hideBoard()
+
 }
 
-
+//hides board
 function hideBoard() {
     const board = document.querySelector('.board-container')
     board.style.display = 'none'
 }
 
-
+//shows board
 function showBoard() {
     const board = document.querySelector('.board-container')
     const gameOverModal = document.querySelector('.game-over-modal')
@@ -83,6 +122,8 @@ function showBoard() {
     board.style.display = 'flex'
     gameOverModal.style.display = 'none'
 }
+
+
 
 function getRandomIntInclusive(min, max) {
     const minCeiled = Math.ceil(min)
