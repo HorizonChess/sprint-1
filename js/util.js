@@ -7,15 +7,20 @@ function renderBoard(mat, selector) {
         for (var j = 0; j < mat[0].length; j++) {
 
             const cell = mat[i][j]
-            const className = `cell cell-${i}-${j}`
+            var className = `cell cell-${i}-${j}`
             var cellContent = ''
 
             //content detrmined based on revealed/isMine/ismarked
             if (!cell.isRevealed) {
                 cellContent = ''
             }
+            //revealed cells show number of mines around unless it's 0
             if (cell.isRevealed && !cell.isMine) {
-                cellContent = cell.minesAroundCount
+                className = 'revealed'
+
+                if (cell.minesAroundCount > 0)
+                    cellContent = cell.minesAroundCount
+
             }
             else if (cell.isRevealed && cell.isMine) {
                 cellContent = MINE //bomb html entity
