@@ -1,3 +1,4 @@
+//global variables
 
 var gLevel =
 {
@@ -17,14 +18,12 @@ const WIN = '&#128526;'
 
 const gGame = {
     isOn: false,
-    // revealedCount: 0,
-    // markedCount: 0,
     secsPassed: 0,
     difficulty: 'Beginner',
     smileyState: NORMAL_SMILEY
 }
-
-function init() {
+//change init to oninit with parameters
+function onInit(difficulty) {
     //resetting variables
     gGame.isOn = false
     gCellsClicked = 0
@@ -33,10 +32,10 @@ function init() {
     clearInterval(gTimerInterval)
 
     //building and rendering the board
-    setDifficulty(gGame.difficulty)
-    // gBoard = buildBoard()
-    // renderBoard(gBoard, '.board-container')
-    // updateStats()
+    setDifficulty(difficulty||gGame.difficulty)
+    gBoard = buildBoard()
+    renderBoard(gBoard, '.board-container')
+    updateStats()
     renderSmiley()
     showBoard()
 }
@@ -51,6 +50,7 @@ function onCellClicked(i, j) {
     handleGameStart()
     if (!gGame.isOn) return
 
+//put in another function
     //check win/loss
     if (currCell.isMine) {
         gLevel.LIVES--
@@ -109,12 +109,13 @@ function handleGameStart() {
 }
 
 //generates random mines on the board model
+//consider getting array?
 function genRandMines() {
     for (var i = 0; i < gLevel.MINES; i++) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
         var randJdx = getRandomIntInclusive(0, gBoard[0].length - 1)
 
-        if (!gBoard[randIdx][randJdx].isRevealed && !gBoard[randIdx][randJdx].isMine) {
+        if (!gBoard[randIdx][randJdx].isMine) {
             gBoard[randIdx][randJdx].isMine = true
         }
         else {
@@ -123,8 +124,9 @@ function genRandMines() {
 
     }
 }
-
+//changes difficulty (from button, immediately updates board)
 function setDifficulty(difficulty) {
+    //if midgame, you can't change diff
     if (gGame.isOn) return
 
     switch (difficulty) {
@@ -141,9 +143,6 @@ function setDifficulty(difficulty) {
     }
 
     gGame.difficulty = difficulty
-    gBoard = buildBoard()
-    renderBoard(gBoard, '.board-container')
-    updateStats()
 }
 
 //recursive function to expand reveal.

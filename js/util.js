@@ -72,7 +72,7 @@ function buildBoard() {
 //updates stats in DOM
 function updateStats() {
     const elStats = document.querySelector('.stats')
-    elStats.innerHTML = `mines left:${gLevel.MINES} || seconds passed: ${gGame.secsPassed} || Lives left: ${gLevel.LIVES}`
+    elStats.innerHTML = `Mines left:${gLevel.MINES} || Seconds passed: ${gGame.secsPassed} || Lives left: ${gLevel.LIVES}`
 
 }
 
@@ -97,10 +97,10 @@ function showGameOverModal(isVictory) {
     gGame.isOn = false
     const elGameOverModal = document.querySelector('.game-over-modal')
     if (isVictory) {
-        elGameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="init()"> Play again?</button>'
+        elGameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="onInit()"> Play again?</button>'
     }
     else {
-        elGameOverModal.innerHTML = '<span> Game over!</span><button onclick="init()"> Play again?</button>'
+        elGameOverModal.innerHTML = '<span> Game over!</span><button onclick="onInit()"> Play again?</button>'
     }
 
     elGameOverModal.style.display = 'flex'

@@ -8,20 +8,20 @@
     <title>Minesweeper</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
-
-<body onload="init()">
+<!-- change to on init -->
+<body onload="onInit('Beginner')">
 
 
     <div class="stats"></div>
-    <div class=smiley-zone onclick="init()"> </div>
+    <div class=smiley-zone onclick="onInit()"> </div>
     <div class="board-container"></div>
     <div class="game-over-modal"> </div>
     <h3>choose your difficulty:</h3>
     <div class="difficulty-container">
         <br>
-        <button onclick="setDifficulty('Beginner')"> Easy</button>
-        <button onclick="setDifficulty('Intermediate')"> Intermediate</button>
-        <button onclick="setDifficulty('Expert')"> Expert</button>
+        <button onclick="onInit('Beginner')"> Easy</button>
+        <button onclick="onInit('Intermediate')"> Intermediate</button>
+        <button onclick="onInit('Expert')"> Expert</button>
 
     </div>
 
