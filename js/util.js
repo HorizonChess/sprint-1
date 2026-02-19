@@ -22,6 +22,10 @@ function renderBoard(mat, selector) {
 
                 if (cell.minesAroundCount > 0)
                     cellContent = cell.minesAroundCount
+                if (cell.minesAroundCount === 1) className = 'revealed cell-type-1'
+                if (cell.minesAroundCount === 2) className = 'revealed cell-type-2'
+                if (cell.minesAroundCount >= 3) className = 'revealed cell-type-3'
+
 
             }
             else if (cell.isRevealed && cell.isMine) {

@@ -3,21 +3,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 table {
-    margin: 100px auto;
+    margin: 50px auto;
     border: 1px solid lightgray;
     border-collapse: collapse;
 }
 
 td {
-    border: 1px solid;
-    height: 30px;
-    width: 30px;
+    border: 1px solid black;
+    height: min(30px, 2.6vw);
+    width: min(30px, 2.6vw);
     text-align: center;
     background-color: rgb(195, 195, 194);
     cursor: pointer;
+    font-size: min(16px,2.2vw)
 }
 
 .stats {
@@ -25,19 +27,31 @@ td {
     justify-content: center;
     align-items: center;
     margin-top: 50px;
-    margin-bottom: 20px
+    margin-bottom: 20px;
+    border: 1px solid rgb(64, 39, 39);
+    border-radius: 15%;
+    padding: 10px;
+    background-color: azure;
 }
 
 .difficulty-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px
+    gap: 10px;
+}
+
+.difficulty-container button {
+    padding: 8px 16px;
+    border: 2px solid #999;
+    background-color: #a5a566;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 footer {
     display: block;
-    margin-top: 150px
+    margin-top: 30px
 }
 
 h3 {
@@ -69,4 +83,23 @@ h3 {
 
 .revealed {
     background-color: darkgray
+}
+
+.cell-type-1{
+color: blue;
+font-weight: bold;
+
+}
+
+
+.cell-type-2{
+color: green;
+font-weight: bold;
+}
+
+
+.cell-type-3{
+color: red;
+font-weight: bold;
+
 }

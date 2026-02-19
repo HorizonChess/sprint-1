@@ -32,7 +32,7 @@ function onInit(difficulty) {
     clearInterval(gTimerInterval)
 
     //building and rendering the board
-    setDifficulty(difficulty||gGame.difficulty)
+    setDifficulty(difficulty || gGame.difficulty)
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     updateStats()
@@ -45,33 +45,15 @@ function onCellClicked(i, j) {
     //update cell in the model
     var currCell = gBoard[i][j]
     currCell.isRevealed = true
+
     //checks if it's the first click
     gCellsClicked++
     handleGameStart()
     if (!gGame.isOn) return
 
-//put in another function
+    //put in another function
     //check win/loss
-    if (currCell.isMine) {
-        gLevel.LIVES--
-        if (gLevel.LIVES <= 0) {
-            revealMines()
-            gGame.smileyState = EXPLODING_HEAD //lose html entity
-            renderSmiley()
-
-            setTimeout(() => {
-                showGameOverModal(false)
-            }, 1000)
-        }
-        //hide the mine if lives are left
-        else {
-            setTimeout(() => {
-                currCell.isRevealed = false
-                renderBoard(gBoard, '.board-container')
-            }, 1000)
-        }
-    }
-
+    if (currCell.isMine) handleMineExplode(currCell)
 
     //cascade reveal if no mine neighbors
     else if (currCell.minesAroundCount === 0)
@@ -109,7 +91,6 @@ function handleGameStart() {
 }
 
 //generates random mines on the board model
-//consider getting array?
 function genRandMines() {
     for (var i = 0; i < gLevel.MINES; i++) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
@@ -181,7 +162,7 @@ function onCellMarked(ev, i, j) {
     var currCell = gBoard[i][j]
     if (currCell.isRevealed) return
 
-//toggle ismarked and level mines count
+    //toggle ismarked and level mines count
     currCell.isMarked = !currCell.isMarked
     currCell.isMarked ? gLevel.MINES-- : gLevel.MINES++
 
@@ -241,6 +222,26 @@ function isVictory() {
         }
     }
     return true
+}
+
+function handleMineExplode(currCell) {
+    gLevel.LIVES--
+    if (gLevel.LIVES <= 0) {
+        revealMines()
+        gGame.smileyState = EXPLODING_HEAD //lose html entity
+        renderSmiley()
+
+        setTimeout(() => {
+            showGameOverModal(false)
+        }, 1000)
+    }
+    //hide the mine if lives are left
+    else {
+        setTimeout(() => {
+            currCell.isRevealed = false
+            renderBoard(gBoard, '.board-container')
+        }, 1000)
+    }
 }
 
 //acts as timer
