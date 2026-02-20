@@ -37,6 +37,7 @@ function onInit(difficulty) {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     updateStats()
+    updateLeaderBoard()
     renderLeaderBoard()
     renderSmiley()
     showBoard()
@@ -54,22 +55,16 @@ function onCellClicked(i, j) {
     handleGameStart()
     if (!gGame.isOn) return
 
-    //put in another function
     //check win/loss
     if (currCell.isMine) handleMineExplode(currCell)
 
     //cascade reveal if no mine neighbors
     else if (currCell.minesAroundCount === 0)
-        for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
-
-            for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
-                expandReveal(idx, jdx)
-            }
-        }
+        initExpandReveal(i, j)
 
     //check if this click wins the game
     if (isVictory()) {
-        gGame.smileyState = WIN //win html entity
+        gGame.smileyState = WIN 
         renderSmiley()
         clearInterval(gTimerInterval)
         setTimeout(() => {
@@ -81,6 +76,7 @@ function onCellClicked(i, j) {
     updateStats()
 
 }
+
 
 function handleGameStart() {
     if (gCellsClicked === 1) {
@@ -128,6 +124,15 @@ function setDifficulty(difficulty) {
     }
 
     gGame.difficulty = difficulty
+}
+
+function initExpandReveal(i, j) {
+    for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
+
+        for (var jdx = Math.max(j - 1, 0); jdx <= Math.min(j + 1, gBoard[0].length - 1); jdx++) {
+            expandReveal(idx, jdx)
+        }
+    }
 }
 
 //recursive function to expand reveal.
@@ -258,28 +263,25 @@ function onSaveRecord() {
 
     if (gGame.leaderBoard.length > 10) gGame.leaderBoard.pop()
 
+    //save in local storage, in a drawer with the name "leaderboard- *difficulty*.
     localStorage.setItem('leaderboard-' + gGame.difficulty, JSON.stringify(gGame.leaderBoard))
 }
 
+
 //fetches leaderboard from storage, updates model and displays leaderboard
-function renderLeaderBoard() {
-    const leaderBoard = JSON.parse(localStorage.getItem('leaderboard-' + gGame.difficulty)) || []
+
+
+function updateLeaderBoard() {
+    //grab from local storage or empty array if no leaderboard exists yet
+    var leaderBoard = localStorage.getItem('leaderboard-' + gGame.difficulty)
+    //turn the string into an object
+    leaderBoard = JSON.parse(leaderBoard) || []
+
     gGame.leaderBoard = leaderBoard
-    const elLeaderBoard = document.querySelector('.leaderboard-entries')
-
-    var strHTML = ''
-    for (var i = 0; i < leaderBoard.length; i++) {
-        strHTML += `<tr>
-        <td>${i + 1}.</td> 
-        <td>${leaderBoard[i].name}</td>
-        <td>${leaderBoard[i].time}s</td>
-        </tr>`
-
-    }
-    elLeaderBoard.innerHTML = strHTML
 }
 
-//acts as timer
+
+
 
 function setTimer() {
     gGame.secsPassed++
