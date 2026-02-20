@@ -103,7 +103,7 @@ function renderLeaderBoard() {
     const elLeaderBoard = document.querySelector('.leaderboard-entries')
 
     var strHTML = ''
-    for (var i = 0; i < leaderBoard.length; i++) {
+    for (var i = 0; i < gGame.leaderBoard.length; i++) {
         strHTML += `<tr>
         <td>${i + 1}.</td> 
         <td>${gGame.leaderBoard[i].name}</td>
