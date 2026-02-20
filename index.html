@@ -8,7 +8,8 @@
     <title>Minesweeper</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
-<!-- change to on init -->
+
+
 <body onload="onInit('Beginner')">
 
 
@@ -16,6 +17,18 @@
     <div class=smiley-zone onclick="onInit()"> </div>
     <div class="board-container"></div>
     <div class="game-over-modal"> </div>
+    <div class="leaderboard">
+        <h3>Leaderboard:</h3>
+        <table>
+            <tr>
+                <th>#</th>
+                <th> Name</th>
+                <th>Time</th>
+            </tr>
+            <tbody class="leaderboard-entries"> </tbody>
+        </table>
+    </div>
+
     <h3>choose your difficulty:</h3>
     <div class="difficulty-container">
         <br>

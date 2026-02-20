@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
 }
 
 table {
@@ -19,7 +19,7 @@ td {
     text-align: center;
     background-color: rgb(195, 195, 194);
     cursor: pointer;
-    font-size: min(16px,2.2vw)
+    font-size: min(16px, 2.2vw)
 }
 
 .stats {
@@ -51,7 +51,9 @@ td {
 
 footer {
     display: block;
-    margin-top: 30px
+    position: fixed;
+    bottom: 36px;
+    left: 36px;
 }
 
 h3 {
@@ -73,6 +75,7 @@ h3 {
     font-size: 22px;
     font-weight: bold;
     color: black;
+    gap: 10px;
 }
 
 .smiley-zone {
@@ -85,21 +88,54 @@ h3 {
     background-color: darkgray
 }
 
-.cell-type-1{
-color: blue;
-font-weight: bold;
+.cell-type-1 {
+    color: blue;
+    font-weight: bold;
 
 }
 
 
-.cell-type-2{
-color: green;
-font-weight: bold;
+.cell-type-2 {
+    color: green;
+    font-weight: bold;
 }
 
 
-.cell-type-3{
-color: red;
-font-weight: bold;
+.cell-type-3 {
+    color: red;
+    font-weight: bold;
 
+}
+
+.leaderboard {
+    position: fixed;
+    right: 120px;
+    top: 160px;
+}
+
+
+.row {
+    border: 1px solid black;
+    font-size: 18px;
+    padding: 10px
+}
+
+.leaderboard table {
+    border-collapse: collapse;
+}
+
+
+.leaderboard td {
+    border: 1px solid black;
+    padding: 8px 15px;
+    text-align: center;
+    background-color: rgba(244, 212, 52, 0.26);
+}
+
+.leaderboard th {
+    font-weight: bold;
+    border: 1px solid black;
+    padding: 8px 15px;
+    text-align: center;
+    background-color: rgba(52, 122, 244, 0.28);
 }

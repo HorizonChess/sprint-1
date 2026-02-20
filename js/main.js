@@ -20,9 +20,10 @@ const gGame = {
     isOn: false,
     secsPassed: 0,
     difficulty: 'Beginner',
-    smileyState: NORMAL_SMILEY
+    leaderBoard: [],
+    smileyState: NORMAL_SMILEY,
 }
-//change init to oninit with parameters
+
 function onInit(difficulty) {
     //resetting variables
     gGame.isOn = false
@@ -36,8 +37,10 @@ function onInit(difficulty) {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     updateStats()
+    renderLeaderBoard()
     renderSmiley()
     showBoard()
+    showLeaderBoard()
 }
 
 function onCellClicked(i, j) {
@@ -68,6 +71,7 @@ function onCellClicked(i, j) {
     if (isVictory()) {
         gGame.smileyState = WIN //win html entity
         renderSmiley()
+        clearInterval(gTimerInterval)
         setTimeout(() => {
             showGameOverModal(true)
         }, 1000)
@@ -91,6 +95,7 @@ function handleGameStart() {
 }
 
 //generates random mines on the board model
+
 function genRandMines() {
     for (var i = 0; i < gLevel.MINES; i++) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
@@ -105,11 +110,10 @@ function genRandMines() {
 
     }
 }
-//changes difficulty (from button, immediately updates board)
-function setDifficulty(difficulty) {
-    //if midgame, you can't change diff
-    if (gGame.isOn) return
 
+//changes difficulty (from button, immediately updates board)
+
+function setDifficulty(difficulty) {
     switch (difficulty) {
         case 'Beginner':
             gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
@@ -173,6 +177,7 @@ function onCellMarked(ev, i, j) {
         gGame.smileyState = WIN
         renderSmiley()
         showGameOverModal(true)
+        clearInterval(gTimerInterval)
     }
 }
 
@@ -211,7 +216,6 @@ function setMinesNegsCount() {
 
 }
 
-
 //checks for win
 
 function isVictory() {
@@ -242,6 +246,37 @@ function handleMineExplode(currCell) {
             renderBoard(gBoard, '.board-container')
         }, 1000)
     }
+}
+
+//saves the record and updates gGameleaderboard
+function onSaveRecord() {
+    const record = document.querySelector('input')
+    const value = record.value
+
+    gGame.leaderBoard.push({ name: value, time: gGame.secsPassed })
+    sortArrSmallToBig(gGame.leaderBoard)
+
+    if (gGame.leaderBoard.length > 10) gGame.leaderBoard.pop()
+
+    localStorage.setItem('leaderboard-' + gGame.difficulty, JSON.stringify(gGame.leaderBoard))
+}
+
+//fetches leaderboard from storage, updates model and displays leaderboard
+function renderLeaderBoard() {
+    const leaderBoard = JSON.parse(localStorage.getItem('leaderboard-' + gGame.difficulty)) || []
+    gGame.leaderBoard = leaderBoard
+    const elLeaderBoard = document.querySelector('.leaderboard-entries')
+
+    var strHTML = ''
+    for (var i = 0; i < leaderBoard.length; i++) {
+        strHTML += `<tr>
+        <td>${i + 1}.</td> 
+        <td>${leaderBoard[i].name}</td>
+        <td>${leaderBoard[i].time}s</td>
+        </tr>`
+
+    }
+    elLeaderBoard.innerHTML = strHTML
 }
 
 //acts as timer

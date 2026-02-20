@@ -101,7 +101,11 @@ function showGameOverModal(isVictory) {
     gGame.isOn = false
     const elGameOverModal = document.querySelector('.game-over-modal')
     if (isVictory) {
-        elGameOverModal.innerHTML = '<span> Congrats, you got them all!</span><button onclick="onInit()"> Play again?</button>'
+        elGameOverModal.innerHTML = `<span> Victorious! you did it in ${gGame.secsPassed} seconds!
+        <label>Name:</label>
+         <input type="text"  placeholder= "Enter your name">
+        </span> 
+        <button onclick="onSaveRecord(); onInit()"> Play again?</button>`
     }
     else {
         elGameOverModal.innerHTML = '<span> Game over!</span><button onclick="onInit()"> Play again?</button>'
@@ -109,6 +113,7 @@ function showGameOverModal(isVictory) {
 
     elGameOverModal.style.display = 'flex'
     hideBoard()
+    hideLeaderBoard()
 
 }
 
@@ -127,10 +132,37 @@ function showBoard() {
     gameOverModal.style.display = 'none'
 }
 
+function hideLeaderBoard() {
+    const leaderBoard = document.querySelector('.leaderboard')
+    leaderBoard.style.display = 'none'
+}
+
+function showLeaderBoard() {
+    const leaderBoard = document.querySelector('.leaderboard')
+    leaderBoard.style.display = 'block'
+}
+
+
+
+
 
 
 function getRandomIntInclusive(min, max) {
     const minCeiled = Math.ceil(min)
     const maxFloored = Math.floor(max)
     return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
+}
+
+//bubble sort
+function sortArrSmallToBig(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr.length - 1 - i; j++) {
+            if (arr[j].time > arr[j + 1].time) {
+                var temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            }
+        }
+    }
+    return arr
 }
