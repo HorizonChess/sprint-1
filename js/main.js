@@ -1,11 +1,6 @@
 //global variables
 
-var gLevel =
-{
-    SIZE: 4,
-    MINES: 2,
-    LIVES: 2,
-}
+var gLevel
 var gBoard
 var gTimerInterval
 var gCellsClicked
@@ -15,9 +10,12 @@ const FLAG = '&#x1F6A9;'
 const NORMAL_SMILEY = '&#128515;'
 const EXPLODING_HEAD = '&#129327;'
 const WIN = '&#128526;'
+const HEART = '❤️'
+const HINT = '💡'
 
 const gGame = {
     isOn: false,
+    isHint: false,
     secsPassed: 0,
     difficulty: 'Beginner',
     leaderBoard: [],
@@ -40,15 +38,27 @@ function onInit(difficulty) {
     updateLeaderBoard()
     renderLeaderBoard()
     renderSmiley()
+    renderHints()
     showBoard()
     showLeaderBoard()
 }
 
 function onCellClicked(i, j) {
-
     //update cell in the model
     var currCell = gBoard[i][j]
     currCell.isRevealed = true
+
+    //handle activated hint, will not work first click intentionally
+    if (gGame.isHint && gGame.isOn) {
+        const revealed = revealNeighbors(i, j)
+        setTimeout(() => {
+            currCell.isRevealed = false
+            hideNeighbors(revealed)
+            renderBoard(gBoard, '.board-container')
+        }, 1500)
+        gGame.isHint = false
+        return
+    }
 
     //checks if it's the first click
     gCellsClicked++
@@ -64,20 +74,14 @@ function onCellClicked(i, j) {
 
     //check if this click wins the game
     if (isVictory()) {
-        gGame.smileyState = WIN 
-        renderSmiley()
-        clearInterval(gTimerInterval)
-        setTimeout(() => {
-            showGameOverModal(true)
-        }, 1000)
+        handleVictory()
     }
     //update stats and board in DOM
     renderBoard(gBoard, '.board-container')
     updateStats()
-
 }
 
-
+//starts the game and places mines
 function handleGameStart() {
     if (gCellsClicked === 1) {
         gGame.isOn = true
@@ -112,19 +116,20 @@ function genRandMines() {
 function setDifficulty(difficulty) {
     switch (difficulty) {
         case 'Beginner':
-            gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
+            gLevel = { SIZE: 4, MINES: 2, LIVES: 2, HINTS: 1 }
             break;
         case 'Intermediate':
-            gLevel = { SIZE: 8, MINES: 14, LIVES: 3 }
+            gLevel = { SIZE: 8, MINES: 14, LIVES: 3, HINTS: 2 }
             break;
         case 'Expert':
-            gLevel = { SIZE: 12, MINES: 32, LIVES: 3 }
+            gLevel = { SIZE: 12, MINES: 32, LIVES: 3, HINTS: 3 }
             break;
-        default: gLevel = { SIZE: 4, MINES: 2, LIVES: 2 }
+        default: gLevel = { SIZE: 4, MINES: 2, LIVES: 2, HINTS: 1 }
     }
 
     gGame.difficulty = difficulty
 }
+//feeds neighbor cells to expandReveal function
 
 function initExpandReveal(i, j) {
     for (var idx = Math.max(i - 1, 0); idx <= Math.min(i + 1, gBoard.length - 1); idx++) {
@@ -179,10 +184,7 @@ function onCellMarked(ev, i, j) {
     renderBoard(gBoard, '.board-container')
 
     if (isVictory()) {
-        gGame.smileyState = WIN
-        renderSmiley()
-        showGameOverModal(true)
-        clearInterval(gTimerInterval)
+        handleVictory()
     }
 }
 
@@ -237,7 +239,7 @@ function handleMineExplode(currCell) {
     gLevel.LIVES--
     if (gLevel.LIVES <= 0) {
         revealMines()
-        gGame.smileyState = EXPLODING_HEAD //lose html entity
+        gGame.smileyState = EXPLODING_HEAD 
         renderSmiley()
 
         setTimeout(() => {
@@ -251,6 +253,16 @@ function handleMineExplode(currCell) {
             renderBoard(gBoard, '.board-container')
         }, 1000)
     }
+}
+
+function handleVictory() {
+    gGame.smileyState = WIN
+    renderSmiley()
+    clearInterval(gTimerInterval)
+    setTimeout(() => {
+        showGameOverModal(true)
+    }, 1000)
+
 }
 
 //saves the record and updates gGameleaderboard
@@ -280,7 +292,22 @@ function updateLeaderBoard() {
     gGame.leaderBoard = leaderBoard
 }
 
+function getLives() {
+    var str = ''
+    for (var i = 0; i < gLevel.LIVES; i++) {
+        str += HEART
+    }
+    return str
+}
 
+function onUseHint(hint) {
+    if (gLevel.HINTS <= 0) return
+
+    hint.classList.add('used')
+    gGame.isHint = true
+    gLevel.HINTS--
+
+}
 
 
 function setTimer() {

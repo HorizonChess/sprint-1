@@ -82,6 +82,8 @@ h3 {
     margin-left: 40px;
     font-size: 30px;
     cursor: pointer;
+    width: fit-content;
+    position: fixed;
 }
 
 .revealed {
@@ -138,4 +140,30 @@ h3 {
     padding: 8px 15px;
     text-align: center;
     background-color: rgba(52, 122, 244, 0.28);
+}
+
+
+.hints .header {
+    font-size: 20px;
+
+}
+
+.hints {
+    font-size: 30px;
+    margin: auto;
+    border: 2px solid black;
+    padding: 10px;
+    width: 180px;
+    border-radius: 16%;
+    background-color: rgba(159, 78, 19, 0.357);
+
+
+}
+
+.hints span {
+    cursor: pointer;
+}
+
+.used {
+    filter: brightness(0.4) saturate(0);
 }

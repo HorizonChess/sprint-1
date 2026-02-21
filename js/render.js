@@ -79,16 +79,57 @@ function getCellHTML(mat, i, j) {
 //updates stats in DOM
 function updateStats() {
     const elStats = document.querySelector('.stats')
-    elStats.innerHTML = `Mines left:${gLevel.MINES} || Seconds passed: ${gGame.secsPassed} || Lives left: ${gLevel.LIVES}`
+    const lives = getLives()
+    elStats.innerHTML = `Mines left:${gLevel.MINES} || Seconds passed: ${gGame.secsPassed} || Lives left: ${lives}`
 
 }
+
+
+function renderHints() {
+    const elHintsContainer = document.querySelector('.hints')
+    var strHTML = '<span class= "header"> Hints: </span>'
+    for (var i = 0; i < gLevel.HINTS; i++) {
+        strHTML += `<span class="hint-${i + 1}" onclick= "onUseHint(this)">${HINT}</span>`
+    }
+    elHintsContainer.innerHTML = strHTML
+}
+
 
 function renderSmiley() {
     const elSmiley = document.querySelector('.smiley-zone')
     elSmiley.innerHTML = `${gGame.smileyState}`
-
 }
+
+//reveal neighbors
+function revealNeighbors(idx, jdx) {
+    var revealed = []
+    for (var i = Math.max(idx - 1, 0); i <= Math.min(idx + 1, gBoard.length - 1); i++) {
+
+        for (var j = Math.max(jdx - 1, 0); j <= Math.min(jdx + 1, gBoard[0].length - 1); j++) {
+
+            if (i === idx && j === jdx) continue
+            if (gBoard[i][j].isRevealed) continue
+
+            gBoard[i][j].isRevealed = true
+            revealed.push({ i, j })
+        }
+
+    }
+    renderBoard(gBoard, '.board-container')
+    return revealed
+}
+
+//hide neighbors that were revealed by hint
+
+function hideNeighbors(revealed) {
+    for (var k = 0; k < revealed.length; k++) {
+        gBoard[revealed[k].i][revealed[k].j].isRevealed = false
+    }
+    renderBoard(gBoard, '.board-container')
+}
+
 //sets mines to revealed
+
 function revealMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++)
@@ -113,6 +154,7 @@ function renderLeaderBoard() {
     }
     elLeaderBoard.innerHTML = strHTML
 }
+
 
 
 //handles game over
