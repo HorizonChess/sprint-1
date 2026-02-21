@@ -207,8 +207,8 @@ function onCallTerminator() {
 
     showTerminatorQuote()
     setTimeout(hideTerminatorQuote, 1000)
-
-    for (var i = 0; i < 3; i++) {
+    const length = (gGame.difficulty === 'Beginner') ? 2 : 3
+    for (var i = 0; i < length; i++) {
         const currMine = getRandMine()
         const elCurrMine = document.querySelector(`.cell-${currMine.i}-${currMine.j}`)
         elCurrMine.classList.add('explode') //only place where we render cells outside renderboard
