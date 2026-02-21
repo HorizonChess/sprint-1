@@ -75,7 +75,6 @@ function getCellHTML(mat, i, j) {
     return strHTML
 }
 
-
 //updates stats in DOM
 function updateStats() {
     const elStats = document.querySelector('.stats')
@@ -155,8 +154,6 @@ function renderLeaderBoard() {
     elLeaderBoard.innerHTML = strHTML
 }
 
-
-
 //handles game over
 function showGameOverModal(isVictory) {
     gGame.isOn = false
@@ -202,9 +199,6 @@ function showLeaderBoard() {
     const leaderBoard = document.querySelector('.leaderboard')
     leaderBoard.style.display = 'block'
 }
-
-
-
 
 function onCallTerminator() {
     if (!gGame.isOn) return
