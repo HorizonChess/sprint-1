@@ -96,7 +96,7 @@ function renderHints() {
 
 
 function renderSmiley() {
-    const elSmiley = document.querySelector('.smiley-zone')
+    const elSmiley = document.querySelector('.smiley')
     elSmiley.innerHTML = `${gGame.smileyState}`
 }
 
@@ -203,4 +203,51 @@ function showLeaderBoard() {
     leaderBoard.style.display = 'block'
 }
 
+
+
+
+function onCallTerminator() {
+    if (!gGame.isOn) return
+    gTerminatorClicks++
+    if (gTerminatorClicks > 1) return
+
+    showTerminatorQuote()
+    setTimeout(hideTerminatorQuote, 1000)
+
+    for (var i = 0; i < 3; i++) {
+        const currMine = getRandMine()
+        const elCurrMine = document.querySelector(`.cell-${currMine.i}-${currMine.j}`)
+        elCurrMine.classList.add('explode') //only place where we render cells outside renderboard
+        removeMine(currMine)
+        setMinesNegsCount()
+
+        setTimeout(() => {
+            elCurrMine.classList.remove('explode')
+            renderBoard(gBoard, '.board-container')
+        }, 1000)
+
+    }
+
+
+}
+
+function hideTerminatorQuote() {
+
+    const elBubble = document.querySelector('.speech-bubble')
+    const elBubbleQuote = document.querySelector('.speech-bubble.quote')
+
+    elBubble.classList.add('hidden')
+    elBubbleQuote.classList.add('hidden')
+}
+
+function showTerminatorQuote() {
+    const quote = getTerminatorQuote()
+    const elBubble = document.querySelector('.speech-bubble')
+    const elBubbleQuote = document.querySelector('.speech-bubble.quote')
+
+    elBubble.classList.remove('hidden')
+    elBubbleQuote.classList.remove('hidden')
+
+    elBubbleQuote.innerHTML = `${quote}`
+}
 

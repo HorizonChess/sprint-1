@@ -15,8 +15,15 @@
 
     <div class="stats"></div>
     <div class="hints"></div>
-
-    <div class="smiley-zone" onclick="onInit()"> </div>
+    <h3 class="mine-terminator">Click to activate MINE TERMINATOR (once per game)</h3>
+    <div class="special-zone">
+        <div class="smiley" onclick="onInit()"></div>
+        <div class="mine-terminator">
+            <img onclick="onCallTerminator()" src="assets/terminator-2.png" alt="Mine Terminator">
+            <img class="speech-bubble" src="assets/speech_bubble.png" alt="speech-bubble">
+            <span class="speech-bubble quote"></span>
+        </div>
+    </div>
     <div class="board-container"></div>
     <div class="game-over-modal"> </div>
 
@@ -32,7 +39,7 @@
         </table>
     </div>
 
-    <h3>choose your difficulty:</h3>
+    <h3>Choose your difficulty:</h3>
     <div class="difficulty-container">
         <br>
         <button onclick="onInit('Beginner')"> Easy</button>
@@ -40,6 +47,7 @@
         <button onclick="onInit('Expert')"> Expert</button>
 
     </div>
+
 
     <footer> Ofek Eliad</footer>
 

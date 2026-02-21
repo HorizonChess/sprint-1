@@ -3,7 +3,9 @@
 var gLevel
 var gBoard
 var gTimerInterval
+
 var gCellsClicked
+var gTerminatorClicks
 
 const MINE = '&#128163;'
 const FLAG = '&#x1F6A9;'
@@ -24,11 +26,7 @@ const gGame = {
 
 function onInit(difficulty) {
     //resetting variables
-    gGame.isOn = false
-    gCellsClicked = 0
-    gGame.secsPassed = 0
-    gGame.smileyState = NORMAL_SMILEY
-    clearInterval(gTimerInterval)
+    resetVariables()
 
     //building and rendering the board
     setDifficulty(difficulty || gGame.difficulty)
@@ -62,7 +60,7 @@ function onCellClicked(i, j) {
 
     //checks if it's the first click
     gCellsClicked++
-    handleGameStart()
+    handleGameStart(i, j)
     if (!gGame.isOn) return
 
     //check win/loss
@@ -73,21 +71,20 @@ function onCellClicked(i, j) {
         initExpandReveal(i, j)
 
     //check if this click wins the game
-    if (isVictory()) {
-        handleVictory()
-    }
+    if (isVictory()) handleVictory()
+
     //update stats and board in DOM
     renderBoard(gBoard, '.board-container')
     updateStats()
 }
 
 //starts the game and places mines
-function handleGameStart() {
+function handleGameStart(i, j) {
     if (gCellsClicked === 1) {
         gGame.isOn = true
         gTimerInterval = setInterval(setTimer, 1000)
 
-        genRandMines()
+        genRandMines(i, j)
         setMinesNegsCount()
         updateStats()
         renderBoard(gBoard, '.board-container')
@@ -96,10 +93,12 @@ function handleGameStart() {
 
 //generates random mines on the board model
 
-function genRandMines() {
+function genRandMines(idx, jdx) {
     for (var i = 0; i < gLevel.MINES; i++) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
         var randJdx = getRandomIntInclusive(0, gBoard[0].length - 1)
+
+        if (randIdx === idx && randJdx === jdx) continue
 
         if (!gBoard[randIdx][randJdx].isMine) {
             gBoard[randIdx][randJdx].isMine = true
@@ -239,7 +238,8 @@ function handleMineExplode(currCell) {
     gLevel.LIVES--
     if (gLevel.LIVES <= 0) {
         revealMines()
-        gGame.smileyState = EXPLODING_HEAD 
+        clearInterval(gTimerInterval)
+        gGame.smileyState = EXPLODING_HEAD
         renderSmiley()
 
         setTimeout(() => {
@@ -310,8 +310,50 @@ function onUseHint(hint) {
 }
 
 
+function getRandMine() {
+    var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
+    var randJdx = getRandomIntInclusive(0, gBoard.length - 1)
+
+    while (!gBoard[randIdx][randJdx].isMine && !gBoard[randIdx][randJdx].isMarked) {
+        var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
+        var randJdx = getRandomIntInclusive(0, gBoard.length - 1)
+    }
+    return { i: randIdx, j: randJdx }
+}
+
+function removeMine(object) {
+    const idx = object.i
+    const jdx = object.j
+    gBoard[idx][jdx].isMine = false
+    gLevel.MINES--
+
+}
+
+function getTerminatorQuote() {
+    const terminatorQuotes = [
+        "Hasta la vista, baby.",
+        "Come with me if<br> you want to live",
+        "Terminated.",
+        "No problemo.",
+        "Get down!",
+    ]
+    const randIndex = getRandomIntInclusive(0, terminatorQuotes.length - 1)
+    return terminatorQuotes[randIndex]
+}
+
 function setTimer() {
     gGame.secsPassed++
     updateStats()
 }
 
+
+function resetVariables() {
+    //resetting variables for init
+    gGame.isOn = false
+    gCellsClicked = 0
+    gGame.secsPassed = 0
+    gGame.smileyState = NORMAL_SMILEY
+    gTerminatorClicks = 0
+    clearInterval(gTimerInterval)
+    hideTerminatorQuote()
+}
