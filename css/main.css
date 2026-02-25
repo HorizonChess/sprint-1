@@ -52,7 +52,7 @@ td {
 
 footer {
     display: block;
-    position: fixed;
+    position: absolute;
     bottom: 36px;
     left: 36px;
 }
@@ -80,8 +80,8 @@ h3 {
 }
 
 .special-zone {
-    top: 21%;
-    left: 2%;
+    /* top: 21%;
+    left: 2%; */
     font-size: 30px;
     cursor: pointer;
     width: fit-content;
@@ -177,6 +177,7 @@ h3 {
 
 
 .mine-terminator {
+    position: relative;
     font-weight: bold;
     font-family: monospace;
     font-size: large
@@ -191,18 +192,18 @@ h3 {
 .mine-terminator .speech-bubble {
     width: 186px;
     height: 120px;
-    position: fixed;
-    top: 14%;
-    left: 14%;
+    position: absolute;
+    top: 70px;
+    left: 130px;
 
 }
 
 h3.mine-terminator {
     width: 180px;
     height: 120px;
-    position: fixed;
+    /* position: fixed;
     left: 6%;
-    top: 8%;
+    top: 8%; */
 
 }
 
@@ -213,9 +214,9 @@ h3.mine-terminator {
 .speech-bubble.quote {
     width: 180px;
     height: 120px;
-    position: fixed;
-    top: 16%;
-    left: 15%
+    position: absolute;
+    top: 90px;
+    left: 154px;
 }
 
 .hidden {
