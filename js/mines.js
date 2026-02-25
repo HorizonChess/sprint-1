@@ -15,10 +15,6 @@ function setMinesNegsCount() {
 
 }
 
-
-
-
-
 //generates random mines on the board model
 
 function genRandMines(idx, jdx) {
@@ -65,7 +61,7 @@ function getRandMine() {
     var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
     var randJdx = getRandomIntInclusive(0, gBoard.length - 1)
 
-    while (!gBoard[randIdx][randJdx].isMine && !gBoard[randIdx][randJdx].isMarked) {
+    while (!gBoard[randIdx][randJdx].isMine || gBoard[randIdx][randJdx].isMarked) {
         var randIdx = getRandomIntInclusive(0, gBoard.length - 1)
         var randJdx = getRandomIntInclusive(0, gBoard.length - 1)
     }

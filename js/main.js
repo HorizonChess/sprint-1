@@ -169,14 +169,11 @@ function onCellMarked(ev, i, j) {
     }
 }
 
-
-
-
 //checks for win
 
 function isVictory() {
     for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard.length; j++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
             if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) return false
             if (!gBoard[i][j].isMine && !gBoard[i][j].isRevealed) return false
         }

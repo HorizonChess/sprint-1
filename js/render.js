@@ -83,7 +83,6 @@ function updateStats() {
 
 }
 
-
 function renderHints() {
     const elHintsContainer = document.querySelector('.hints')
     var strHTML = '<span class= "header"> Hints: </span>'
@@ -207,7 +206,8 @@ function onCallTerminator() {
 
     showTerminatorQuote()
     setTimeout(hideTerminatorQuote, 1000)
-    const length = (gGame.difficulty === 'Beginner') ? 2 : 3
+
+    const length = (gLevel.MINES <= 3) ? gLevel.MINES : 3
     for (var i = 0; i < length; i++) {
         const currMine = getRandMine()
         const elCurrMine = document.querySelector(`.cell-${currMine.i}-${currMine.j}`)
@@ -221,8 +221,7 @@ function onCallTerminator() {
         }, 1000)
 
     }
-
-
+    if (isVictory()) handleVictory()
 }
 
 function hideTerminatorQuote() {
