@@ -87,7 +87,7 @@ function renderHints() {
     const elHintsContainer = document.querySelector('.hints')
     var strHTML = '<span class= "header"> Hints: </span>'
     for (var i = 0; i < gLevel.HINTS; i++) {
-        strHTML += `<span class="hint-${i + 1}" onclick= "onUseHint(this)">${HINT}</span>`
+        strHTML += `<span class="hint-${i + 1}" onclick= "onUseHint(this)" title= "Click a cell to reveal it and its neighbors risk free">${HINT}</span>`
     }
     elHintsContainer.innerHTML = strHTML
 }

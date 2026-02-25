@@ -1,3 +1,11 @@
+body {
+    box-sizing: border-box;
+    min-height: 100vh;
+    margin: 0;
+    border: 2vh solid rgba(80, 57, 57, 0.729);
+    padding: 2vh;
+}
+
 .table-container {
 
     display: flex;
@@ -48,6 +56,13 @@ td {
     background-color: #a5a566;
     cursor: pointer;
     font-weight: bold;
+    transition: 0.5s
+}
+
+.difficulty-container button:hover {
+    background-color: rgba(61, 255, 219, 0.227);
+    border: 2px solid #5bacd5b4;
+
 }
 
 footer {
@@ -69,7 +84,7 @@ h3 {
     min-height: 300px;
     width: 100px auto;
     display: none;
-    background-color: bisque;
+    background-color: rgba(255, 228, 196, 0.566);
     justify-content: center;
     align-items: center;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -169,6 +184,12 @@ h3 {
 
 .hints span {
     cursor: pointer;
+    transition: 0.5s;
+}
+
+.hints span:hover {
+    cursor: pointer;
+    filter: brightness(1.2) saturate(0.8);
 }
 
 .used {
